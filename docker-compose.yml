@@ -1,13 +1,16 @@
+# // filepath: c:\Users\HP\Downloads\emailInput_docker\docker-compose.yml
 version: '3'
 services:
   www:
     build: .
+    container_name: email_collector_www
     volumes:
-      - "C:/Users/User/Desktop/workspace/doker/:/var/www/html"
+      - .:/var/www/html
     ports:
       - "80:80"
     depends_on:
       - db
+    user: "${UID:-1000}:${GID:-1000}"
 
   db:
     image: mysql:5.7
@@ -19,6 +22,13 @@ services:
       MYSQL_PASSWORD: password
     ports:
       - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -27,3 +37,6 @@ services:
       - "8080:80"
     environment:
       PMA_HOST: db
+
+volumes:
+  db_data:

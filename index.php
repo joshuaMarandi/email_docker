@@ -17,12 +17,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $stmt = $conn->prepare("INSERT INTO emails (email) VALUES (?)");
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error); // Output the error message
+        }
+
         $stmt->bind_param("s", $email);
 
         if ($stmt->execute()) {
             echo "<p class='message' style='color: green;'>Email saved successfully!</p>";
         } else {
-            echo "<p class='message' style='color: red;'>Error saving email.</p>";
+            echo "<p class='message' style='color: red;'>Error saving email: " . $stmt->error . "</p>";
         }
 
         $stmt->close();
