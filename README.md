@@ -20,4 +20,12 @@ This project is a simple web application that collects email addresses from user
 
 ---
 
-## Project Structure
+## Creating table to database
+docker-compose exec db mysql -u user -p -e "
+  USE email_collector;
+  CREATE TABLE IF NOT EXISTS emails (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+"
